@@ -1,0 +1,110 @@
+import kotlin.math.roundToInt
+
+const val SIXHUNDRED = 600
+const val SIXTY = 60
+const val TEN = 10
+const val EIGHT = 8
+var buyRow = mutableListOf<Int>()
+var buySeat = mutableListOf<Int>()
+var firstTicket = 0
+var income = 0
+    fun viewSeats(rows: Int, seats: Int) {
+        var seatsNumber = 1
+        var rowNumber = 1
+        println("")
+        println("Cinema:")
+        print(" ")
+        while (seatsNumber <= seats) {    //Число мест в ряду (цифры)
+            print(" $seatsNumber")
+            ++seatsNumber
+        }
+        val arr = MutableList(rows) { "S".repeat(seats).toMutableList() }  // Гениально, заполненность зала
+        if (firstTicket != 0) {
+            for (i in buyRow.indices)
+            arr[buyRow[i]][buySeat[i]] = 'B'
+        }
+        for(row in 0 until rows) {
+            println(" ")
+            print(rowNumber)
+            rowNumber++
+            for (seat in 0 until seats) {
+                print(" ")
+                print(arr[row][seat])
+            }
+        }
+        println("")
+    }
+
+    fun buyTicket  (rows: Int, seats: Int) {
+        var repeatEnter = true
+        asd@ while(repeatEnter == true) {
+            println("")
+            println("Enter a row number:")
+            val chooseRow = readln().toInt()
+            println("Enter a seat number in that row:")
+            val choosePlace = readln().toInt()
+            if(chooseRow > rows || choosePlace > seats) {
+                println("Wrong input!")
+                continue@asd
+            }
+            for (i in buyRow.indices) {
+                if (buyRow[i] == chooseRow - 1 && buySeat[i] == choosePlace- 1) {
+                    println(" ")
+                    println("That ticket has already been purchased!")
+                    repeatEnter = true
+                    continue@asd
+                }
+            }
+            val totalSeats = rows * seats
+            println(" ")
+            if (totalSeats < SIXTY) {
+                income += TEN
+                println("Ticket price: \$$TEN")
+            } else if (chooseRow > rows / 2) {
+                income += EIGHT
+                println("Ticket price: \$$EIGHT")
+            } else {
+                println("Ticket price: \$$TEN")
+                income += TEN
+            }
+            buyRow.add(chooseRow - 1)
+            buySeat.add(choosePlace - 1)
+            firstTicket++
+            break
+        }
+    }
+
+    fun Statistics(rows: Int, seats: Int){
+        var totalIncome = 0
+        val totalSeats = rows * seats
+        if (totalSeats < SIXTY) {
+            totalIncome = totalSeats * TEN
+        } else totalIncome = (seats * rows / 2 * TEN) + (seats * rows / 2 * EIGHT)
+        val purchasedSeats = 100 / totalSeats.toFloat() * firstTicket
+        val formatPercentage = "%.2f".format(purchasedSeats)
+        println(" ")
+        println("Number of purchased tickets: $firstTicket")
+        println("Percentage: $formatPercentage%")
+        println("Current income: \$$income")
+        println("Total income: \$$totalIncome")
+    }
+
+fun main() {
+    println("Enter the number of rows:")
+    val rows = readln().toInt()
+    println("Enter the number of seats in each row:")
+    val seats = readln().toInt()
+    do {
+        println(" ")
+        println("1. Show the seats")
+        println("2. Buy a ticket")
+        println("3. Statistics")
+        println("0. Exit")
+        val a = readln().toInt()
+        when (a) {
+            1 -> viewSeats(rows, seats)
+            2 -> buyTicket(rows, seats)
+            3 -> Statistics(rows, seats)
+        }
+    }while (a != 0)
+}
